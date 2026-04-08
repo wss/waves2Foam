@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ### CLEAR THE 0 DIRECTORY
+mkdir -p 0
 (cd 0; rm -f *)
 
 . $PWD/../../../bin/bashrc noPrint
@@ -15,7 +16,7 @@ elif [ $FOAMEXTENDPROJECT -eq 1 ]
 then
     sed 's/object      alpha.org;/object      alpha1;/' < 0.org/alpha1.org > 0/alpha1
 else
-    sed 's/object      alpha.org;/object      alpha.water;/' < 0.org/alpha1.org > 0/alpha.water
+    sed 's/object      alpha.org;/object      alpha1;/' < 0.org/alpha1.org > 0/alpha1
 fi
 
 # Copy the pressure field
@@ -32,14 +33,26 @@ else
         then
             sed 's/object      pd.org;/object      p_rgh;/' < 0.org/pd.org > 0/p_rgh
         else
-            cp 0.org/p_rgh.1706.org 0/p_rgh
+            if [ -f "0.org/p_rgh.1706.org" ]; then
+                cp 0.org/p_rgh.1706.org 0/p_rgh
+            elif [ -f "0.org/p_rgh.org" ]; then
+                cp 0.org/p_rgh.org 0/p_rgh
+            else
+                sed 's/object      pd.org;/object      p_rgh;/' < 0.org/pd.org > 0/p_rgh
+            fi
         fi
     else
         if [ $WM_PROJECT_VERSION_NUMBER -lt 400 ]
         then
             sed 's/object      pd.org;/object      p_rgh;/' < 0.org/pd.org > 0/p_rgh
         else
-            cp 0.org/p_rgh.40.org 0/p_rgh
+            if [ -f "0.org/p_rgh.40.org" ]; then
+                cp 0.org/p_rgh.40.org 0/p_rgh
+            elif [ -f "0.org/p_rgh.org" ]; then
+                cp 0.org/p_rgh.org 0/p_rgh
+            else
+                sed 's/object      pd.org;/object      p_rgh;/' < 0.org/pd.org > 0/p_rgh
+            fi
         fi
     fi
 fi
